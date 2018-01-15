@@ -27,8 +27,9 @@ contract Coop is owned {
 
   Activity[] public activities;
   mapping (uint => uint[]) public parts;
-  uint public numVotes;
-  mapping (uint => Vote[]) public votes;
+  mapping (uint => uint[]) public voteIds;
+  mapping (uint => Vote) public votes;
+  uint numVotes;
   
   struct Activity {
     uint actId;
@@ -191,8 +192,8 @@ contract Coop is owned {
    */
   function _tallyPromises(uint actId) private view returns (uint) {
     uint promise = 0;
-    for(uint i = 0; i < votes[actId].length; i++) {
-      Vote memory vote = votes[actId][i];
+    for(uint i = 0; i < voteIds[actId].length; i++) {
+      Vote memory vote = votes[voteIds[actId][i]];
       if(actId == vote.actId) {
         promise += vote.promise;
       }
@@ -264,8 +265,8 @@ contract Coop is owned {
    *
    */
   function voted(uint memId, uint actId) public view returns (bool) {
-    for(uint i = 0; i < votes[actId].length; i++) {
-      if(memId == votes[actId][i].voterId) {
+    for(uint i = 0; i < voteIds[actId].length; i++) {
+      if(memId == votes[voteIds[actId][i]].voterId) {
         return true;
       } 
     }
@@ -287,17 +288,47 @@ contract Coop is owned {
       !isParticipant(memberId[msg.sender], actId) &&
       !voted(memberId[msg.sender], actId)
     );
+  
+    voteIds[actId].push(numVotes);
 
-    votes[actId].push(Vote({
-      voteId: numVotes,
-      actId: actId,
-      voterId: memberId[msg.sender],
-      promise: promise,
-      justification: justification,
-      deleted: false
-    }));
+    Vote storage v = votes[numVotes];
+    v.voteId = numVotes;
+    v.actId = actId;
+    v.voterId = memberId[msg.sender];
+    v.promise = promise;
+    v.justification = justification;
+    v.deleted = false;
+
     numVotes++;
 
   }
+
+  /**
+   *
+   */
+  function getVoteIds(uint actId) public view returns (uint[]) {
+    return voteIds[actId];
+  }
+
+  /**
+   *
+   */
+  function getVote(uint voteId) public view returns (
+    uint,
+    uint,
+    uint,
+    uint,
+    string,
+    bool) {
+    return (
+      votes[voteId].voteId,
+      votes[voteId].actId,
+      votes[voteId].voterId,
+      votes[voteId].promise,
+      votes[voteId].justification,
+      votes[voteId].deleted
+    );
+  }
+
 }
 

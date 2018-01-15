@@ -100,7 +100,7 @@ function vote(actId, prom, just) {
     ci.vote(
       actId,
       prom,
-      just
+      just,
       {from: web3.eth.accounts[0], gas:1000000},
       () => {
         resolve('Vote added.');
@@ -126,6 +126,9 @@ async function initialize() {
   console.log('participants: ' + ci.getParticipants.call(1).toString());
   console.log(await vote(1, 500, "Great idea."));
   console.log('# activities: ' + ci.activityCount.call().toString());
+  checkActivities();
+  console.log('Vote Ids: ' + ci.getVoteIds.call(1));
+  console.log('Vote: ' + ci.getVote(ci.getVoteIds.call(1)[0]));
 }
 
 document.addEventListener('DOMContentLoaded', event => { 
