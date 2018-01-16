@@ -71,7 +71,7 @@ contract Coop is owned {
    */
   function Coop (uint initBudget) payable public {
     budget = initBudget;
-    addMember(owner, 'jbg');
+    addMember(owner, "jbg");
   }
 
   /**
