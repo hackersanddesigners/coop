@@ -26,6 +26,8 @@ contract Coop is owned {
   uint public activeMembers;
 
   Activity[] public activities;
+  uint numActivities;
+
   mapping (uint => uint[]) public parts;
   mapping (uint => uint[]) public voteIds;
   mapping (uint => Vote) public votes;
@@ -178,13 +180,14 @@ contract Coop is owned {
     onlyMembers public
   {
     activities.push(Activity({
-      actId: activities.length,
+      actId: numActivities,
       initiatorId: memberId[msg.sender],
       cost: cost,
       description: description,
       passed: false,
       deleted: false
     }));
+    numActivities++;
   }
 
   /**
@@ -330,5 +333,25 @@ contract Coop is owned {
     );
   }
 
+  /**
+   *
+   */
+  function finalize(uint actId) onlyMembers public {
+    Activity storage activity = activities[actId];
+    require(
+      !activities[actId].passed &&
+      _tallyPromises(actId) >= activities[actId].cost);
+
+    for(uint i = 0; i < voteIds[actId].length; i++) {
+      Vote storage v = votes[voteIds[actId][i]];
+      if(!v.deleted) {
+        Member storage member = members[v.voterId];
+        member.balance -= v.promise;
+      }
+    }
+
+    activity.passed = true;
+  }
+  
 }
 

@@ -109,6 +109,19 @@ function vote(actId, prom, just) {
   });
 }
 
+function finalize(actId) {
+  return new Promise(resolve => {
+    ci.finalize(
+      actId,
+      {from: web3.eth.accounts[0], gas:1000000},
+      () => {
+        resolve('Activity finalized.');
+      }
+    );
+  });
+}
+
+
 async function initialize() {
   console.log(await distributeBudget());
   checkResults();
@@ -117,18 +130,21 @@ async function initialize() {
   console.log(await addActivity(1000, "Some description."));
   console.log('# activities: ' + ci.activityCount.call().toString());
   checkActivities();
-  console.log(await addParticipant(1, 1));
-  console.log(await addParticipant(2, 1));
-  console.log('participants: ' + ci.getParticipants.call(1).toString());
-  console.log(await removeParticipant(2, 1));
-  console.log('participants: ' + ci.getParticipants.call(1).toString());
-  console.log(await addParticipant(2, 1));
-  console.log('participants: ' + ci.getParticipants.call(1).toString());
-  console.log(await vote(1, 500, "Great idea."));
+  console.log(await addParticipant(1, 0));
+  console.log(await addParticipant(2, 0));
+  console.log('participants: ' + ci.getParticipants.call(0).toString());
+  console.log(await removeParticipant(2, 0));
+  console.log('participants: ' + ci.getParticipants.call(0).toString());
+  console.log(await addParticipant(2, 0));
+  console.log('participants: ' + ci.getParticipants.call(0).toString());
+  console.log(await vote(0, 1000, "Great idea."));
   console.log('# activities: ' + ci.activityCount.call().toString());
   checkActivities();
-  console.log('Vote Ids: ' + ci.getVoteIds.call(1));
-  console.log('Vote: ' + ci.getVote(ci.getVoteIds.call(1)[0]));
+  console.log('Vote Ids: ' + ci.getVoteIds.call(0));
+  console.log('Vote: ' + ci.getVote(ci.getVoteIds.call(0)[0]));
+  console.log(await finalize(0));
+  checkResults();
+  checkActivities();
 }
 
 document.addEventListener('DOMContentLoaded', event => { 
