@@ -289,6 +289,7 @@ contract Coop is owned {
 
     require(
       !isParticipant(memberId[msg.sender], actId) &&
+      promise <= members[memberId[msg.sender]].balance &&
       !voted(memberId[msg.sender], actId)
     );
   
