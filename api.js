@@ -1,4 +1,4 @@
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost/geth'));
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const cc = web3.eth.contract(abi);
 const ci = cc.at(contractAddress);
 
@@ -135,41 +135,40 @@ function finalize(actId) {
 async function initialize() {
   console.log(await distributeBudget());
   checkResults();
-  console.log(await removeMember(web3.eth.accounts[1]));
-  checkResults();
+//  console.log(await removeMember(web3.eth.accounts[1]));
+//  checkResults();
   console.log(await addActivity(1000, "Some title", "http://wiki..."));
   console.log('# activities: ' + ci.activityCount.call().toString());
   checkActivities();
-  console.log(await addParticipant(1, 0));
-  console.log(await addParticipant(2, 0));
-  console.log('participants: ' + ci.getParticipants.call(0).toString());
-  console.log(await removeParticipant(2, 0));
-  console.log('participants: ' + ci.getParticipants.call(0).toString());
-  console.log(await addParticipant(2, 0));
-  console.log('participants: ' + ci.getParticipants.call(0).toString());
-  console.log(await vote(0, 1000, "Great idea."));
-  console.log('# activities: ' + ci.activityCount.call().toString());
-  checkActivities();
-  console.log('Vote Ids: ' + ci.getVoteIds.call(0));
-  console.log('Vote: ' + ci.getVote(ci.getVoteIds.call(0)[0]));
-  console.log(await finalize(0));
-  checkResults();
-  checkActivities();
+//  console.log(await addParticipant(1, 0));
+//  console.log(await addParticipant(2, 0));
+//  console.log('participants: ' + ci.getParticipants.call(0).toString());
+//  console.log(await removeParticipant(2, 0));
+//  console.log('participants: ' + ci.getParticipants.call(0).toString());
+//  console.log(await addParticipant(2, 0));
+//  console.log('participants: ' + ci.getParticipants.call(0).toString());
+//  console.log(await vote(0, 1000, "Great idea."));
+//  console.log('# activities: ' + ci.activityCount.call().toString());
+//  checkActivities();
+//  console.log('Vote Ids: ' + ci.getVoteIds.call(0));
+//  console.log('Vote: ' + ci.getVote(ci.getVoteIds.call(0)[0]));
+//  console.log(await finalize(0));
+//  checkResults();
+//  checkActivities();
 }
 
 document.addEventListener('DOMContentLoaded', event => { 
   console.log(contractAddress);
   console.log(web3.eth.accounts[0]);
-  checkActivities();
 
   // Sanity check - JBG
-//  console.log('Total budget: ' + ci.getCoopBudget.call().toString());
-//  console.log(ci.getMember.call(0).toString());
+  console.log('Total budget: ' + ci.getCoopBudget.call().toString());
+  console.log(ci.getMember.call(0).toString());
 
   // Add 3 more members, distribute budget - JBG
-//  addMembers().then(() => {
-//    initialize();
-//  });
+  addMembers().then(() => {
+    initialize();
+  });
 
 });
 
