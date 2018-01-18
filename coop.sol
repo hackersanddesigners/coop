@@ -37,6 +37,7 @@ contract Coop is owned {
     uint actId;
     uint initiatorId;
     uint cost;
+    string title;
     string description;
     bool passed;
     bool deleted;
@@ -175,6 +176,7 @@ contract Coop is owned {
    */
   function addActivity(
     uint cost,
+    string title,
     string description
   )
     onlyMembers public
@@ -183,10 +185,12 @@ contract Coop is owned {
       actId: numActivities,
       initiatorId: memberId[msg.sender],
       cost: cost,
+      title: title,
       description: description,
       passed: false,
       deleted: false
     }));
+    addParticipant(memberId[msg.sender], numActivities);
     numActivities++;
   }
 
@@ -217,6 +221,7 @@ contract Coop is owned {
     return (
       activities[index].actId,
       activities[index].initiatorId,
+      activities[index].title,
       activities[index].description,
       activities[index].cost,
       activities[index].passed,

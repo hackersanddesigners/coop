@@ -1,4 +1,4 @@
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost/geth'));
 const cc = web3.eth.contract(abi);
 const ci = cc.at(contractAddress);
 
@@ -56,10 +56,11 @@ function removeMember(addr) {
   });
 }
 
-function addActivity(cost, description) {
+function addActivity(cost, title, description) {
   return new Promise(resolve => {
     ci.addActivity(
       cost,
+      title,
       description, 
       {from: web3.eth.accounts[0], gas:1000000},
       () => {
@@ -127,7 +128,7 @@ async function initialize() {
   checkResults();
   console.log(await removeMember(web3.eth.accounts[1]));
   checkResults();
-  console.log(await addActivity(1000, "Some description."));
+  console.log(await addActivity(1000, "Some title", "http://wiki..."));
   console.log('# activities: ' + ci.activityCount.call().toString());
   checkActivities();
   console.log(await addParticipant(1, 0));
@@ -147,18 +148,20 @@ async function initialize() {
   checkActivities();
 }
 
+/*
 document.addEventListener('DOMContentLoaded', event => { 
   console.log(contractAddress);
   console.log(web3.eth.accounts[0]);
 
   // Sanity check - JBG
-  console.log('Total budget: ' + ci.getCoopBudget.call().toString());
-  console.log(ci.getMember.call(0).toString());
+//  console.log('Total budget: ' + ci.getCoopBudget.call().toString());
+//  console.log(ci.getMember.call(0).toString());
 
   // Add 3 more members, distribute budget - JBG
-  addMembers().then(() => {
-    initialize();
-  });
+//  addMembers().then(() => {
+//    initialize();
+//  });
 
 });
+*/
 
