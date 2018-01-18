@@ -44,6 +44,15 @@ function checkActivities() {
   }
 }
 
+function getActivities() {
+  var acts = [];
+  for(var i = 0; i < ci.activityCount.call(); i++) {
+    console.log("HERE");
+    acts.push(ci.getActivity.call(i));
+  }
+  return acts;
+}
+
 function removeMember(addr) {
    return new Promise(resolve => {
     ci.deactivateMember(
@@ -148,10 +157,10 @@ async function initialize() {
   checkActivities();
 }
 
-/*
 document.addEventListener('DOMContentLoaded', event => { 
   console.log(contractAddress);
   console.log(web3.eth.accounts[0]);
+  checkActivities();
 
   // Sanity check - JBG
 //  console.log('Total budget: ' + ci.getCoopBudget.call().toString());
@@ -163,5 +172,4 @@ document.addEventListener('DOMContentLoaded', event => {
 //  });
 
 });
-*/
 

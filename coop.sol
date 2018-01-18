@@ -215,6 +215,7 @@ contract Coop is owned {
   uint,
   uint,
   string,
+  string,
   uint,
   bool,
   uint) {
