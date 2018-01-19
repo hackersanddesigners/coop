@@ -44,10 +44,13 @@ function checkActivities() {
   }
 }
 
+function getActivity(actId) {
+  return ci.getActivity.call(actId);
+}
+
 function getActivities() {
   var acts = [];
   for(var i = 0; i < ci.activityCount.call(); i++) {
-    console.log("HERE");
     acts.push(ci.getActivity.call(i));
   }
   return acts;
@@ -76,6 +79,12 @@ function addActivity(cost, title, description) {
         resolve('Activity added.');
       }
     );
+  });
+}
+
+function getParticipants(actId) {
+  return ci.getParticipants.call(actId).map( p => {
+    parseInt(p.toString());
   });
 }
 
@@ -166,9 +175,9 @@ document.addEventListener('DOMContentLoaded', event => {
   console.log(ci.getMember.call(0).toString());
 
   // Add 3 more members, distribute budget - JBG
-  addMembers().then(() => {
-    initialize();
-  });
+//  addMembers().then(() => {
+//    initialize();
+//  });
 
 });
 

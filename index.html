@@ -3,7 +3,7 @@
 <head>
   <title>HD COOP</title>
   <meta charset="UTF-8">
- <link rel="stylesheet" type="text/css" href="index.css" />
+ <link rel="stylesheet" type="text/css" href="coop.css" />
  </head>
 </head>
 <body>
@@ -11,16 +11,42 @@
     <div class="cols">
       <div class="items">
       </div>
-      <div class="form">
+      <div class="detail">
       </div>
     </div>
   </div>
   <div class="templates">
+    <nav class="menu">
+      <ul>
+        <li class="create">Create activity</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+      </ul>
+    </nav>
     <div class="item">
-      <p class="title">
-      <p class="description">
-      <p class="cost">
+      <p class="title"></p>
+      <p><a class="description"></a></p>
+      <p><span class="euro">&euro;</span><span class="cost"></span></p>
     </div>
+    <div class="login">
+      <div class="form">
+        <input type="text" placeholder="Username"/>
+        <input type="text" placeholder="Password"/>
+        <div class="button">Submit</div>
+      </div>
+    </div>
+    <div class="activity">
+      <h1 class="title"></h1>
+      <h2><a class="description"></a></h2>
+      <p class="initiator"></p>
+      <p><span class="euro">&euro;</span><span class="cost"></span></p>
+      <h2>Participants</h2>
+      <ul class="participants"></ul>
+      <h2>Votes</h2>
+      <ul class="votes"></ul>
+    </div>
+    <li class="vote"></li>
+    <li class="part"></li>
   </div>
 </body>
 <script src="./web3.js"></script>

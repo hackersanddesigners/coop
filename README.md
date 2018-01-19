@@ -21,7 +21,7 @@ geth --networkid 1337 console
 > miner.stop()
  
 
-geth --networkid 1337 --rpc --rpcapi "eth,net,web3,admin"
+geth --networkid 1337 --rpc --rpcapi "eth,net,web3,admin" console 2>> geth.log
 
 docker start -ia hd-coop
 
