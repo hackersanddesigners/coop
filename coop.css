@@ -16,6 +16,11 @@ p {
   margin-bottom: 5px;
 }
 
+.error {
+  color: #f00;
+  text-align: center;
+}
+
 .items {
 /*  background: #ff0; */
   float: left;

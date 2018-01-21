@@ -1,8 +1,10 @@
-var appCreateActivity = () => {
-  console.log('Create activity.');
-};
+var url = "http://localhost:3000";
 
-var appActivityDetail = (e) => {
+function appCreateActivity() {
+  console.log('Create activity.');
+}
+
+function appActivityDetail(e) {
   var t = e.target.className != 'item' ? e.target.parentNode : e.target;
   var actId = t.getAttribute('data-id');
   var act = getActivity(actId);
@@ -22,9 +24,9 @@ var appActivityDetail = (e) => {
     var part = parts[i];
   }
 
-};
+}
 
-var appLoadActivities = () => {
+function appLoadActivities() {
   var acts = getActivities();
   for(var i = 0; i < acts.length; i++) {
     var item = document.querySelector('.templates .item').cloneNode(true);
@@ -39,30 +41,34 @@ var appLoadActivities = () => {
   for(var i = 0; i < items.length; i++) {
     items[i].addEventListener('click', appActivityDetail, true);
   };
-};
+}
 
-var appShowMenu = () => {
+function appShowMenu() {
   document.querySelector('.detail').innerHTML = '';
   document.querySelector('.detail').appendChild(
     document.querySelector('.templates .menu').cloneNode(true)
   );
   document.querySelector('.detail .menu .create')
     .addEventListener('click', appCreateActivity, false);
-};
+}
 
-var appShowLogin = () => {
+function appShowLogin() {
   document.querySelector('.detail').innerHTML = '';
   document.querySelector('.detail').appendChild(
     document.querySelector('.templates .login').cloneNode(true)
   );
   document.querySelector('.detail .login .button')
     .addEventListener('click', appLogin, false);
-};
+}
 
-var appLogin = () => {
-  appLoadActivities();
-  appShowMenu();
-};
+async function appLogin() {
+  doRequest({ 'endpoint': '/login' }).then(() => {
+    appLoadActivities();
+    appShowMenu();
+  }).catch((err) => {
+    document.querySelector('.error').innerHTML = err;
+  });
+}
 
 document.addEventListener('DOMContentLoaded', event => { 
   console.log("app.js...");
