@@ -1,3 +1,4 @@
+/*
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const cc = web3.eth.contract(abi);
 const ci = cc.at(contractAddress);
@@ -180,43 +181,6 @@ document.addEventListener('DOMContentLoaded', event => {
 //  });
 
 });
+*/
 
-
-
-var url = "http://localhost:3000";
-
-function doRequest(opts) {
-  return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest();
-    xhr.open(!opts.method ? 'GET' : opts.method, url + opts.endpoint);
-    xhr.onload = function () {
-      if (this.status >= 200 && this.status < 300) {
-        resolve(xhr.response);
-      } else {
-        reject({
-          status: this.status,
-          statusText: xhr.statusText
-        });
-      }
-    };
-    xhr.onerror = function () {
-      reject({
-        status: this.status,
-        statusText: xhr.statusText
-      });
-    };
-    if (opts.headers) {
-      Object.keys(opts.headers).forEach(function (key) {
-        xhr.setRequestHeader(key, opts.headers[key]);
-      });
-    }
-    var params = opts.params;
-    if (params && typeof params === 'object') {
-      params = Object.keys(params).map(function (key) {
-        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-      }).join('&');
-    }
-    xhr.send(params);
-  });
-};
 

@@ -16,6 +16,11 @@ p {
   margin-bottom: 5px;
 }
 
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .error {
   color: #f00;
   text-align: center;
@@ -80,7 +85,7 @@ li {
   cursor: pointer;
 }
 
-input[type=text], .button {
+input[type=text], input[type=password], .button {
   display: block;
   margin: 20px auto 20px;
   border: 8px solid #000;

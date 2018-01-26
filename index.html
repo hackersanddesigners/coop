@@ -18,8 +18,8 @@
   <div class="templates">
     <nav class="menu">
       <ul>
-        <li class="create">Create activity</li>
-        <li>Item 2</li>
+        <li class="menu-activity">Create activity</li>
+        <li class="menu-member">Add member</li>
         <li>Item 3</li>
       </ul>
     </nav>
@@ -28,13 +28,12 @@
       <p><a class="description"></a></p>
       <p><span class="euro">&euro;</span><span class="cost"></span></p>
     </div>
-    <div class="login">
-      <div class="form">
-        <input type="text" placeholder="Username"/>
-        <input type="text" placeholder="Password"/>
-        <div class="button">Submit</div>
-        <p class="error"></p>
-      </div>
+    <div class="login form">
+      <h1>Login</h1>
+      <input name="name" type="text" placeholder="Username"/>
+      <input name="password" type="password" placeholder="Password"/>
+      <div class="button">Submit</div>
+      <p class="error"></p>
     </div>
     <div class="activity">
       <h1 class="title"></h1>
@@ -46,14 +45,25 @@
       <h2>Votes</h2>
       <ul class="votes"></ul>
     </div>
+    <div class="add-member form">
+      <h1>Add Member</h1>
+      <input name="name" type="text" placeholder="Name (ex. James)"/>
+      <input name="address" type="text" placeholder="Address (ex. 0x1234...)"/>
+      <div class="button">Submit</div>
+    </div>
+    <li class="participant"></li>
+    <div class="add-activity form">
+      <h1>Add Activity</h1>
+      <input name="cost" type="text" placeholder="Cost (ex. 1000)"/>
+      <input name="title" type="text" placeholder="Title (ex. Administration)"/>
+      <input name="description" type="text"
+        placeholder="Description (ex. http://wiki.hack...)"/>
+      <div class="button">Submit</div>
+    </div>
     <li class="vote"></li>
     <li class="part"></li>
   </div>
 </body>
-<script src="./web3.js"></script>
-<script src="./abi.js"></script>
-<script src="./address.js"></script>
-<script src="./api.js"></script>
 <script src="./app.js"></script>
 </html>
 
