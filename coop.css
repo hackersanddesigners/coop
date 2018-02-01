@@ -1,5 +1,6 @@
 * {
   margin: 0;
+  padding: 0;
 }
 
 body {
@@ -13,12 +14,36 @@ html, body, .content, .cols {
 }
 
 p {
+  font-size: 21px;
   margin-bottom: 5px;
 }
 
+h2, h3 {
+  margin: 21px 0;
+  font-size: 21px;
+}
+
 h1 {
-  text-align: center;
   text-transform: uppercase;
+  margin-bottom: 34px;
+  text-align: center;
+  font-size: 34px;
+}
+
+select {
+  font-size: 21px;
+  background: #fff;
+  border: 8px solid #000;
+  width: 280px;
+}
+
+.center {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
 }
 
 .error {
@@ -54,7 +79,8 @@ h1 {
   float: left;
 /*  background: #f00; */
   width: 50%;
-  min-height: 100%;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 .activity {
@@ -62,10 +88,17 @@ h1 {
 }
 
 .activity .title {
-  text-transform: uppercase;
+  font-size: 34px;
 }
 
-nav, .form {
+.close {
+  text-align: right;
+  cursor: pointer;
+  padding: 13px 13px 0 0;
+  margin: 0;
+}
+
+nav, .form, .notice h1 {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -77,12 +110,15 @@ ul {
 }
 
 li {
-  font-size: 34px; 
-  text-transform: uppercase;
+  font-size: 21px; 
   text-align: center;
   margin: 21px;
   border-bottom: 8px solid #000;
   cursor: pointer;
+}
+
+.menu li {
+  font-size: 34px;
 }
 
 input[type=text], input[type=password], .button {
@@ -92,10 +128,10 @@ input[type=text], input[type=password], .button {
   box-sizing:border-box;
   font-size: 21px;
   text-align: center;
+  padding: 2px;
 }
 
 .button {
-  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -109,6 +145,10 @@ input[type=text], input[type=password], .button {
   display: none;
 }
 
+.add-part.button, .add-vote.button {
+  width: 280px;
+}
+
 @media all and (max-width:640px) {
 
 html, body, .content, .cols {
@@ -117,7 +157,7 @@ html, body, .content, .cols {
 }
 
 textarea, input, input[type=text] {
-  font-size: 8px;
+  font-size: 21px;
 }
 
 .items {

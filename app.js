@@ -48,6 +48,12 @@ function memberName(memId) {
   }
 }
 
+function memberId(memName) {
+  for(var i = 0; i < members.length; i++) {
+    if(members[i][2] == memName) return members[i][0];
+  }
+}
+
 /**
  * APIish stuff - JBG
  */
@@ -55,10 +61,16 @@ function memberName(memId) {
 function appGetActivity(e) {
   var t = e.target.className != 'item' ? e.target.parentNode : e.target;
   var actId = t.getAttribute('data-id');
-  console.log(actId);
   doRequest({ 'endpoint': '/activities?actId=' + actId })
   .then((act) => {
     appShowActivity(JSON.parse(act));
+  });
+}
+
+function appGetMembers() {
+  doRequest({ 'endpoint': '/members' })
+  .then((members) => {
+    console.log(members);
   });
 }
 
@@ -80,14 +92,18 @@ function appGetVoteIds(actId) {
   doRequest({ 'endpoint': '/votes?actId=' + actId })
   .then((voteIdsStr) => {
     var voteIds = JSON.parse(voteIdsStr);
-    for(var i = 0; i < voteIds.length; i++) {
-      appGetVote(voteIds[i]);
+    if(voteIds.length == 0) {
+      appShowNoVotes();
+    } else {
+      for(var i = 0; i < voteIds.length; i++) {
+        appGetVote(voteIds[i]);
+      }
     }
   });
 }
 
 function appGetVote(voteId) {
-  doRequest({ 'endpoint': '/votes?voteId=' + actId })
+  doRequest({ 'endpoint': '/votes?voteId=' + voteId })
   .then((vote) => {
     appShowVote(JSON.parse(vote));
   });
@@ -107,11 +123,8 @@ async function appLogin(params) {
     'params': params })
   .then(() => {
     appShow();
-    console.log("logged in");
   })
   .catch((err, res) => {
-    console.log(err);
-    console.log(res);
     document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
@@ -122,11 +135,56 @@ async function appAddActivity(params) {
     'method': 'POST',
     'params': params })
   .then(() => {
-    appShow();
-    console.log('Activity added');
+    appShowNotice('Thank you! Please allow some time for your activity to be mined. 🔨');
   })
   .catch((err, res) => {
-    document.querySelector('.error').innerHTML = "U FAILED.";
+//    document.querySelector('.error').innerHTML = "U FAILED.";
+  });
+}
+
+async function appAddPart(params) {
+  doRequest({
+    'endpoint': '/participants',
+    'method': 'POST',
+    'params': params })
+  .then(() => {
+    appShowNotice('Thank you! Please allow some time for your participant to be mined. 🔨');
+  })
+  .catch((err, res) => {
+ //   document.querySelector('.error').innerHTML = "U FAILED.";
+  });
+}
+
+async function appAddVote(params) {
+  doRequest({
+    'endpoint': '/votes',
+    'method': 'POST',
+    'params': params })
+  .then(() => {
+    appShowNotice('Thank you! Please allow some time for your vote to be mined. 🔨');
+  })
+  .catch((err, res) => {
+ //   document.querySelector('.error').innerHTML = "U FAILED.";
+  });
+}
+
+async function appFinalize(params) {
+  doRequest({
+    'endpoint': '/finalize',
+    'method': 'POST',
+    'params': params })
+  .then(() => {
+    appShowNotice('Thank you! Please allow some time for activity to be mined. 🔨');
+  })
+  .catch((err, res) => {
+ //   document.querySelector('.error').innerHTML = "U FAILED.";
+  });
+}
+
+function appLogout() {
+  doRequest({ 'endpoint': '/logout' })
+  .then((acts) => {
+    appShowLogin();
   });
 }
 
@@ -135,31 +193,70 @@ async function appAddActivity(params) {
  */
 
 function appCreateActivity() {
-  console.log('Create activity.');
+  appShowAddActivity();
+}
+
+function appShowNotice(notice) {
+  document.querySelector('.detail').innerHTML = '';
+  appShowClose();
+  var note = document.querySelector('.templates .notice').cloneNode(true);
+  note.querySelector('h1').innerHTML = notice;
+  document.querySelector('.detail').appendChild(note);
+}
+
+function appShowClose() {
+  document.querySelector('.detail').appendChild(
+    document.querySelector('.templates .close').cloneNode(true)
+  );
+  document.querySelector('.detail .close')
+    .addEventListener('click', appShowMenu, false);
 }
 
 function appShowActivity(act) {
-  console.log(act); 
   document.querySelector('.detail').innerHTML = '';
-  var activity = document.querySelector('.templates .activity').cloneNode(true)
-  document.querySelector('.detail').appendChild(activity);
+  appShowClose();
 
+  var activity = document.querySelector('.templates .activity').cloneNode(true)
+  activity.setAttribute('data-id', act[0]);
   activity.querySelector('.title').innerHTML = act[2];
   activity.querySelector('.description').innerHTML = act[3];
   activity.querySelector('.description').setAttribute("href", act[3]);
-  activity.querySelector('.cost').innerHTML = act[4].toString();
+  activity.querySelector('.cost').innerHTML = act[6].toString() + ' / ' + act[4].toString();
+
+  document.querySelector('.detail').appendChild(activity);
 
   appGetParticipants(act[0]);
+  appGetVoteIds(act[0]);
+
+  document.querySelector('.detail .add-vote').addEventListener('click', () => {
+    appAddVote({
+      'actId': document.querySelector('.detail .activity').getAttribute('data-id'),
+      'prom': document.querySelector('.detail input[name=promise]').value,
+      'just': document.querySelector('.detail input[name=just]').value
+    });
+  }, true);
+
+  if(act[4] == act[6] && !act[5]) {
+    document.querySelector('.detail .finalize .button').addEventListener('click', () => {
+      appFinalize({
+        'actId': document.querySelector('.detail .activity').getAttribute('data-id')
+      });
+    }, true);
+    document.querySelector('.detail .finalize').classList.remove('hidden');
+  }
+
 }
 
 function appShowActivities(acts) {
+  console.log(acts);
+  document.querySelector('.items').innerHTML = '';
   for(var i = 0; i < acts.length; i++) {
     var item = document.querySelector('.templates .item').cloneNode(true);
     item.setAttribute('data-id', acts[i][0]);
     item.querySelector('.title').innerHTML = acts[i][2];
     item.querySelector('.description').innerHTML = acts[i][3];
     item.querySelector('.description').setAttribute("href", acts[i][3]);
-    item.querySelector('.cost').innerHTML = acts[i][4].toString();
+    item.querySelector('.cost').innerHTML = acts[i][6] + ' / ' + acts[i][4].toString();
     document.querySelector('.items').appendChild(item);
   }
   var items = document.querySelectorAll('.items .item');
@@ -169,16 +266,47 @@ function appShowActivities(acts) {
 }
 
 function appShowParticipants(parts) {
+  document.querySelector('.detail .participants').innerHTML = '';
+  // Participant list - JBG
   for(var i = 0; i < parts.length; i++) {
     var part = document.querySelector('.templates .participant').cloneNode(true);
     part.innerHTML = memberName(parts[i]);
     document.querySelector('.detail .participants').appendChild(part);
+
+        document.querySelector('.detail .add-part').addEventListener('click', () => {
+      appAddPart({
+        'actId': document.querySelector('.detail .activity').getAttribute('data-id'),
+        'memId': memberId(document.querySelector('.detail .sel-part').value),
+      });
+    }, true);
+  }
+
+  // Dropdown - JBG
+  for(var j = 0; j < members.length; j++) {
+    var part = false;
+    for(var i = 0; i < parts.length; i++) {
+      if(members[j][0] == parts[i]) part = true;
+    }
+    if(!part) {
+      var optPart = document.querySelector('.templates .opt-part').cloneNode(true)
+      optPart.innerHTML = members[j][2];
+      document.querySelector('.detail .sel-part').appendChild(optPart);
+    }
   }
 }
 
+function appShowNoVotes() {
+  document.querySelector('.detail .votes').appendChild(
+    document.querySelector('.templates .no-votes').cloneNode(true)
+  );
+}
+
 function appShowVote(vote) {
-  var vote = document.querySelector('.templates .vote').cloneNode(true);
-  document.querySelector('.detail .votes').appendChild(vote);
+  var voteElm = document.querySelector('.templates .vote').cloneNode(true);
+  voteElm.querySelector('.voter').innerHTML = memberName(vote[2]);
+  voteElm.querySelector('.promise').innerHTML = vote[3];
+  voteElm.querySelector('.just').innerHTML = vote[4];
+  document.querySelector('.detail .votes').appendChild(voteElm);
 }
 
 function appShowMenu() {
@@ -188,9 +316,12 @@ function appShowMenu() {
   );
   document.querySelector('.detail .menu .menu-activity')
     .addEventListener('click', appCreateActivity, false);
+  document.querySelector('.detail .menu .menu-logout')
+    .addEventListener('click', appLogout, false);
 }
 
 function appShowLogin() {
+  document.querySelector('.items').innerHTML = '';
   document.querySelector('.detail').innerHTML = '';
   document.querySelector('.detail').appendChild(
     document.querySelector('.templates .login').cloneNode(true)
@@ -213,6 +344,7 @@ function appShowAddMember() {
 
 function appShowAddActivity() {
   document.querySelector('.detail').innerHTML = '';
+  appShowClose();
   document.querySelector('.detail').appendChild(
     document.querySelector('.templates .add-activity').cloneNode(true)
   );
@@ -236,11 +368,9 @@ function appShow() {
 document.addEventListener('DOMContentLoaded', event => { 
   doRequest({ 'endpoint': '/' })
   .then(() => {
-    console.log('auth');
     appShow();
   })
   .catch(() => {
-    console.log('no auth');
     appShowLogin();
   });
 });

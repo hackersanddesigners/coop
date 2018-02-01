@@ -20,13 +20,13 @@
       <ul>
         <li class="menu-activity">Create activity</li>
         <li class="menu-member">Add member</li>
-        <li>Item 3</li>
+        <li class="menu-logout">Logout</li>
       </ul>
     </nav>
     <div class="item">
       <p class="title"></p>
       <p><a class="description"></a></p>
-      <p><span class="euro">&euro;</span><span class="cost"></span></p>
+      <p><span class="euro">&euro;</span> <span class="cost"></span></p>
     </div>
     <div class="login form">
       <h1>Login</h1>
@@ -37,14 +37,29 @@
     </div>
     <div class="activity">
       <h1 class="title"></h1>
-      <h2><a class="description"></a></h2>
-      <p class="initiator"></p>
-      <p><span class="euro">&euro;</span><span class="cost"></span></p>
+      <h1><span class="euro">&euro;</span> <span class="cost"></span></h1>
+      <p><a class="description"></a></p>
       <h2>Participants</h2>
       <ul class="participants"></ul>
+      <h2>Add Participant</h2>
+      <div class="act-form">
+        <div class="center"><select class="sel-part"></select></div>
+        <span class="add-part button">Add participant</span>
+      </div>
       <h2>Votes</h2>
       <ul class="votes"></ul>
+      <h2>Add Vote</h2>
+      <div class="act-form">
+        <input name="promise" type="text" placeholder="Promise (ex. 1000)"/>
+        <input name="just" type="text" placeholder="Note (ex. Great idea!)"/>
+        <span class="add-vote button">Add vote</span>
+      </div>
+      <div class="finalize hidden">
+        <h2>Finalize</h2>
+        <span class="button">Get the money!</span>
+      </div>
     </div>
+    <option class="opt-part"></option>
     <div class="add-member form">
       <h1>Add Member</h1>
       <input name="name" type="text" placeholder="Name (ex. James)"/>
@@ -60,8 +75,17 @@
         placeholder="Description (ex. http://wiki.hack...)"/>
       <div class="button">Submit</div>
     </div>
-    <li class="vote"></li>
+    <li class="vote">
+      <p class="voter"></p>
+      <p><span class="euro">&euro;</span><span class="promise"></span></p>
+      <p class="just"></p>
+    </li>
     <li class="part"></li>
+    <h1 class="close">X</h1>
+    <div class="notice">
+      <h1></h1>
+    </div>
+    <h2 class="center no-votes">No votes</h2>
   </div>
 </body>
 <script src="./app.js"></script>
