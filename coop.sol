@@ -48,7 +48,8 @@ contract Coop is owned {
     address addr;
     string name;
     uint memberSince;
-    uint balance;
+    int balance;
+    int promiseAmt;
     bool active;
   }
 
@@ -292,13 +293,14 @@ contract Coop is owned {
   )
     onlyMembers public
   {
+    Member storage mem = members[memberId[msg.sender]];
 
     require(
       !isParticipant(memberId[msg.sender], actId) &&
-      promise <= members[memberId[msg.sender]].balance &&
+      promise <= (mem.balance - mem.promiseAmt) &&
       !voted(memberId[msg.sender], actId)
     );
-  
+
     voteIds[actId].push(numVotes);
 
     Vote storage v = votes[numVotes];
@@ -310,6 +312,8 @@ contract Coop is owned {
     v.deleted = false;
 
     numVotes++;
+
+    mem.promiseAmt += promise;
 
   }
 
@@ -354,6 +358,7 @@ contract Coop is owned {
       if(!v.deleted) {
         Member storage member = members[v.voterId];
         member.balance -= v.promise;
+        member.promiseAmt -= v.promise;
       }
     }
 
