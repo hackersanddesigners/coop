@@ -7,6 +7,23 @@
  </head>
 </head>
 <body>
+  <div class="header hidden">
+    <span class='header-blk header-bal'>
+      <span class='header-lbl'>Balance: </span>
+      <span class="euro">&euro;</span>
+      <span class='header-val'>0</span> 
+    </span>
+    <span class='header-blk header-prom'>
+      <span class='header-lbl'>Promised: </span>
+      <span class="euro">&euro;</span>
+      <span class='header-val'>0</span> 
+    </span>
+    <span class='header-blk header-user'>
+      <span class='header-lbl'>User: </span>
+      <span class='header-val'>_</span> 
+    </span>
+    <div style="clear:both"></div>
+  </div>
   <div class="content">
     <div class="cols">
       <div class="items">
@@ -73,6 +90,7 @@
       <input name="title" type="text" placeholder="Title (ex. Administration)"/>
       <input name="description" type="text"
         placeholder="Description (ex. http://wiki.hack...)"/>
+      <div class="center"><input name="global" type="checkbox"/><span> Global</span></div>
       <div class="button">Submit</div>
     </div>
     <li class="vote">

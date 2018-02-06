@@ -38,6 +38,7 @@ function doRequest(opts) {
 };
 
 var members = [];
+var user = '_';
 
 /**
  * Helpers - JBG
@@ -64,13 +65,6 @@ function appGetActivity(e) {
   doRequest({ 'endpoint': '/activities?actId=' + actId })
   .then((act) => {
     appShowActivity(JSON.parse(act));
-  });
-}
-
-function appGetMembers() {
-  doRequest({ 'endpoint': '/members' })
-  .then((members) => {
-    console.log(members);
   });
 }
 
@@ -113,6 +107,12 @@ function appGetMembers() {
   doRequest({ 'endpoint': '/members' })
   .then((mems) => {
     members = JSON.parse(mems);
+    for(var i = 0; i < members.length; i++) {
+      if(members[i][2] == user) {
+        document.querySelector('.header-bal .header-val').innerHTML = members[i][4];
+        document.querySelector('.header-prom .header-val').innerHTML = members[i][5];
+      }
+    }
   });
 }
 
@@ -321,6 +321,7 @@ function appShowMenu() {
 }
 
 function appShowLogin() {
+  document.querySelector('.header').classList.add('hidden');
   document.querySelector('.items').innerHTML = '';
   document.querySelector('.detail').innerHTML = '';
   document.querySelector('.detail').appendChild(
@@ -353,21 +354,29 @@ function appShowAddActivity() {
       appAddActivity({
         "cost": document.querySelector('.detail input[name=cost]').value,
         "title": document.querySelector('.detail input[name=title]').value,
-        "description": document.querySelector('.detail input[name=description]').value
+        "description": document.querySelector('.detail input[name=description]').value,
+        "global": document.querySelector('.detail input[name=global]').checked
       });
     }, false);
 }
 
 
 function appShow() {
+  appShowHeader();
   appGetMembers();
   appGetActivities();
   appShowMenu();
 }
 
+function appShowHeader() {
+  document.querySelector('.header').classList.remove('hidden');
+  document.querySelector('.header-user .header-val').innerHTML = user;
+}
+
 document.addEventListener('DOMContentLoaded', event => { 
   doRequest({ 'endpoint': '/' })
-  .then(() => {
+  .then((data) => {
+    user = JSON.parse(data).user;
     appShow();
   })
   .catch(() => {

@@ -18,6 +18,10 @@ p {
   margin-bottom: 5px;
 }
 
+span {
+  font-size: 21px;
+}
+
 h2, h3 {
   margin: 21px 0;
   font-size: 21px;
@@ -49,6 +53,20 @@ select {
 .error {
   color: #f00;
   text-align: center;
+}
+
+.header {
+  background: #000;
+  color: #fff;
+}
+
+.header-blk {
+  float: right;
+  margin-right: 21px;
+}
+
+.header-val {
+  font-weight: bold;
 }
 
 .items {
