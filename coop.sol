@@ -19,11 +19,11 @@ contract owned {
 
 contract Coop is owned {
 
-  uint public budget;
+  int public budget;
   mapping (address => uint) public memberId;
 
   Member[] public members;
-  uint public activeMembers;
+  int public activeMembers;
 
   Activity[] public activities;
   uint numActivities;
@@ -36,11 +36,12 @@ contract Coop is owned {
   struct Activity {
     uint actId;
     uint initiatorId;
-    uint cost;
+    int cost;
     string title;
     string description;
     bool passed;
     bool deleted;
+    bool global;
   }
 
   struct Member {
@@ -48,7 +49,8 @@ contract Coop is owned {
     address addr;
     string name;
     uint memberSince;
-    uint balance;
+    int balance;
+    int promiseAmt;
     bool active;
   }
 
@@ -56,7 +58,7 @@ contract Coop is owned {
     uint voteId;
     uint actId;
     uint voterId;
-    uint promise;
+    int promise;
     string justification;
     bool deleted;
   }
@@ -70,7 +72,7 @@ contract Coop is owned {
   /**
    * Constructor function
    */
-  function Coop (uint initBudget) payable public {
+  function Coop (int initBudget) payable public {
     budget = initBudget;
     addMember(owner, "jbg");
   }
@@ -78,7 +80,7 @@ contract Coop is owned {
   /**
    *
    */
-  function getCoopBudget() public view returns (uint) {
+  function getCoopBudget() public view returns (int) {
     return budget;
   }
 
@@ -90,7 +92,8 @@ contract Coop is owned {
   address,
   string,
   uint,
-  uint,
+  int,
+  int,
   bool) {
     return (
       members[index].memId,
@@ -98,6 +101,7 @@ contract Coop is owned {
       members[index].name,
       members[index].memberSince,
       members[index].balance,
+      members[index].promiseAmt,
       members[index].active
     );
   }
@@ -127,6 +131,7 @@ contract Coop is owned {
       memberSince: now,
       name: memberName,
       balance: 0,
+      promiseAmt: 0,
       active: true
     }));
 
@@ -152,7 +157,7 @@ contract Coop is owned {
    *
    */
   function distributeBudget() onlyOwner public {
-    uint memBudget = budget / activeMembers;
+    int memBudget = budget / activeMembers;
     for(uint i = 0; i < members.length; i++) {
       if(members[i].active) {
         members[i].balance = members[i].balance + memBudget; 
@@ -169,15 +174,27 @@ contract Coop is owned {
   }
 
   /**
+   *
+   */
+  function _createGlobalVotes(uint actId, int cost) private {
+    for(uint i = 0; i < members.length; i++) {
+      if(members[i].active) {
+        _vote(actId, members[i].memId, cost / activeMembers, "");
+      }
+    }
+  }
+
+  /**
    * Add Activity
    *
    * @param cost of the activity 
    * @param description wiki url, description
    */
   function addActivity(
-    uint cost,
+    int cost,
     string title,
-    string description
+    string description,
+    bool global
   )
     onlyMembers public
   {
@@ -188,17 +205,22 @@ contract Coop is owned {
       title: title,
       description: description,
       passed: false,
-      deleted: false
+      deleted: false,
+      global: global
     }));
+    
     addParticipant(memberId[msg.sender], numActivities);
+
+    if(global) { _createGlobalVotes(numActivities, cost); }
+
     numActivities++;
   }
 
   /**
    *
    */
-  function _tallyPromises(uint actId) private view returns (uint) {
-    uint promise = 0;
+  function _tallyPromises(uint actId) private view returns (int) {
+    int promise = 0;
     for(uint i = 0; i < voteIds[actId].length; i++) {
       Vote memory vote = votes[voteIds[actId][i]];
       if(actId == vote.actId) {
@@ -216,9 +238,10 @@ contract Coop is owned {
   uint,
   string,
   string,
-  uint,
+  int,
   bool,
-  uint) {
+//  bool,
+  int) {
     return (
       activities[index].actId,
       activities[index].initiatorId,
@@ -226,6 +249,7 @@ contract Coop is owned {
       activities[index].description,
       activities[index].cost,
       activities[index].passed,
+//      activities[index].global,
       _tallyPromises(activities[index].actId)
     );
   }
@@ -233,7 +257,7 @@ contract Coop is owned {
   /**
    *
    */
-  function isParticipant(uint memId, uint actId)  onlyMembers public returns (bool) {
+  function isParticipant(uint memId, uint actId)  onlyMembers public view returns (bool) {
     for(uint i = 0; i < parts[actId].length; i++) {
       if(parts[actId][i] == memId) {
         return true;
@@ -266,7 +290,7 @@ contract Coop is owned {
   /**
    *
    */
-  function getParticipants(uint actId) onlyMembers public returns (uint[]) {
+  function getParticipants(uint actId) onlyMembers public view returns (uint[]) {
     return parts[actId];
   }
 
@@ -285,31 +309,48 @@ contract Coop is owned {
   /**
    *
    */
-  function vote(
+  function _vote(
     uint actId,
-    uint promise,
-    string justification 
+    uint memId,
+    int promise,
+    string justification
   )
     onlyMembers public
   {
-
-    require(
-      !isParticipant(memberId[msg.sender], actId) &&
-      promise <= members[memberId[msg.sender]].balance &&
-      !voted(memberId[msg.sender], actId)
-    );
-  
     voteIds[actId].push(numVotes);
 
     Vote storage v = votes[numVotes];
     v.voteId = numVotes;
     v.actId = actId;
-    v.voterId = memberId[msg.sender];
+    v.voterId = memId; 
     v.promise = promise;
     v.justification = justification;
     v.deleted = false;
 
     numVotes++;
+
+    members[memId].promiseAmt += promise;
+  } 
+
+  /**
+   *
+   */
+  function vote(
+    uint actId,
+    int promise,
+    string justification 
+  )
+    onlyMembers public
+  {
+    Member storage mem = members[memberId[msg.sender]];
+
+    require(
+      !isParticipant(memberId[msg.sender], actId) &&
+      promise <= (mem.balance - mem.promiseAmt) &&
+      !voted(memberId[msg.sender], actId)
+    );
+    
+    _vote(actId, memberId[msg.sender], promise, justification);
 
   }
 
@@ -327,7 +368,7 @@ contract Coop is owned {
     uint,
     uint,
     uint,
-    uint,
+    int,
     string,
     bool) {
     return (
@@ -338,6 +379,14 @@ contract Coop is owned {
       votes[voteId].justification,
       votes[voteId].deleted
     );
+  }
+
+  /**
+   *
+   */
+  function deleteVote(uint voteId) onlyMembers public {
+    require(!activities[votes[voteId].actId].global);
+    votes[voteId].deleted = true;
   }
 
   /**
@@ -354,6 +403,7 @@ contract Coop is owned {
       if(!v.deleted) {
         Member storage member = members[v.voterId];
         member.balance -= v.promise;
+        member.promiseAmt -= v.promise;
       }
     }
 

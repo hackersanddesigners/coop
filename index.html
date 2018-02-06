@@ -7,6 +7,23 @@
  </head>
 </head>
 <body>
+  <div class="header hidden">
+    <span class='header-blk header-bal'>
+      <span class='header-lbl'>Balance: </span>
+      <span class="euro">&euro;</span>
+      <span class='header-val'>0</span> 
+    </span>
+    <span class='header-blk header-prom'>
+      <span class='header-lbl'>Promised: </span>
+      <span class="euro">&euro;</span>
+      <span class='header-val'>0</span> 
+    </span>
+    <span class='header-blk header-user'>
+      <span class='header-lbl'>User: </span>
+      <span class='header-val'>_</span> 
+    </span>
+    <div style="clear:both"></div>
+  </div>
   <div class="content">
     <div class="cols">
       <div class="items">
@@ -18,42 +35,77 @@
   <div class="templates">
     <nav class="menu">
       <ul>
-        <li class="create">Create activity</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
+        <li class="menu-activity">Create activity</li>
+        <li class="menu-member">Add member</li>
+        <li class="menu-logout">Logout</li>
       </ul>
     </nav>
     <div class="item">
       <p class="title"></p>
       <p><a class="description"></a></p>
-      <p><span class="euro">&euro;</span><span class="cost"></span></p>
+      <p><span class="euro">&euro;</span> <span class="cost"></span></p>
     </div>
-    <div class="login">
-      <div class="form">
-        <input type="text" placeholder="Username"/>
-        <input type="text" placeholder="Password"/>
-        <div class="button">Submit</div>
-        <p class="error"></p>
-      </div>
+    <div class="login form">
+      <h1>Login</h1>
+      <input name="name" type="text" placeholder="Username"/>
+      <input name="password" type="password" placeholder="Password"/>
+      <div class="button">Submit</div>
+      <p class="error"></p>
     </div>
     <div class="activity">
       <h1 class="title"></h1>
-      <h2><a class="description"></a></h2>
-      <p class="initiator"></p>
-      <p><span class="euro">&euro;</span><span class="cost"></span></p>
+      <h1><span class="euro">&euro;</span> <span class="cost"></span></h1>
+      <p><a class="description"></a></p>
       <h2>Participants</h2>
       <ul class="participants"></ul>
+      <h2>Add Participant</h2>
+      <div class="act-form">
+        <div class="center"><select class="sel-part"></select></div>
+        <span class="add-part button">Add participant</span>
+      </div>
       <h2>Votes</h2>
       <ul class="votes"></ul>
+      <h2>Add Vote</h2>
+      <div class="act-form">
+        <input name="promise" type="text" placeholder="Promise (ex. 1000)"/>
+        <input name="just" type="text" placeholder="Note (ex. Great idea!)"/>
+        <span class="add-vote button">Add vote</span>
+      </div>
+      <div class="finalize hidden">
+        <h2>Finalize</h2>
+        <span class="button">Get the money!</span>
+      </div>
     </div>
-    <li class="vote"></li>
+    <option class="opt-part"></option>
+    <div class="add-member form">
+      <h1>Add Member</h1>
+      <input name="name" type="text" placeholder="Name (ex. James)"/>
+      <input name="address" type="text" placeholder="Address (ex. 0x1234...)"/>
+      <div class="button">Submit</div>
+    </div>
+    <li class="participant"></li>
+    <div class="add-activity form">
+      <h1>Add Activity</h1>
+      <input name="cost" type="text" placeholder="Cost (ex. 1000)"/>
+      <input name="title" type="text" placeholder="Title (ex. Administration)"/>
+      <input name="description" type="text"
+        placeholder="Description (ex. http://wiki.hack...)"/>
+      <div class="center"><input name="global" type="checkbox"/><span> Global</span></div>
+      <div class="button">Submit</div>
+    </div>
+    <li class="vote">
+      <p class="voter"></p>
+      <p><span class="euro">&euro;</span><span class="promise"></span></p>
+      <p class="just"></p>
+    </li>
     <li class="part"></li>
+    <h1 class="close">X</h1>
+    <div class="notice">
+      <h1></h1>
+    </div>
+    <h2 class="center no-votes">No votes</h2>
   </div>
 </body>
-<script src="./web3.js"></script>
-<script src="./abi.js"></script>
-<script src="./address.js"></script>
-<script src="./api.js"></script>
 <script src="./app.js"></script>
 </html>
 
