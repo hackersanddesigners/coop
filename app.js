@@ -43,6 +43,12 @@ var user = '_';
 /**
  * Helpers - JBG
  */
+
+function dec(n) {
+  return parseFloat(n / 100).toFixed(2);
+}
+
+
 function memberName(memId) {
   for(var i = 0; i < members.length; i++) {
     if(members[i][0] == memId) return members[i][2];
@@ -109,8 +115,8 @@ function appGetMembers() {
     members = JSON.parse(mems);
     for(var i = 0; i < members.length; i++) {
       if(members[i][2] == user) {
-        document.querySelector('.header-bal .header-val').innerHTML = members[i][4];
-        document.querySelector('.header-prom .header-val').innerHTML = members[i][5];
+        document.querySelector('.header-bal .header-val').innerHTML = dec(members[i][4]);
+        document.querySelector('.header-prom .header-val').innerHTML = dec(members[i][5]);
       }
     }
   });
@@ -221,7 +227,8 @@ function appShowActivity(act) {
   activity.querySelector('.title').innerHTML = act[2];
   activity.querySelector('.description').innerHTML = act[3];
   activity.querySelector('.description').setAttribute("href", act[3]);
-  activity.querySelector('.cost').innerHTML = act[6].toString() + ' / ' + act[4].toString();
+  activity.querySelector('.cost').innerHTML =
+    dec(act[6]).toString() + ' / ' + dec(act[4]).toString();
 
   document.querySelector('.detail').appendChild(activity);
 
@@ -231,7 +238,7 @@ function appShowActivity(act) {
   document.querySelector('.detail .add-vote').addEventListener('click', () => {
     appAddVote({
       'actId': document.querySelector('.detail .activity').getAttribute('data-id'),
-      'prom': document.querySelector('.detail input[name=promise]').value,
+      'prom': parseFloat(document.querySelector('.detail input[name=promise]').value) * 100,
       'just': document.querySelector('.detail input[name=just]').value
     });
   }, true);
@@ -256,7 +263,8 @@ function appShowActivities(acts) {
     item.querySelector('.title').innerHTML = acts[i][2];
     item.querySelector('.description').innerHTML = acts[i][3];
     item.querySelector('.description').setAttribute("href", acts[i][3]);
-    item.querySelector('.cost').innerHTML = acts[i][6] + ' / ' + acts[i][4].toString();
+    item.querySelector('.cost').innerHTML =
+      dec(acts[i][6]) + ' / ' + dec(acts[i][4].toString());
     document.querySelector('.items').appendChild(item);
   }
   var items = document.querySelectorAll('.items .item');
@@ -304,7 +312,7 @@ function appShowNoVotes() {
 function appShowVote(vote) {
   var voteElm = document.querySelector('.templates .vote').cloneNode(true);
   voteElm.querySelector('.voter').innerHTML = memberName(vote[2]);
-  voteElm.querySelector('.promise').innerHTML = vote[3];
+  voteElm.querySelector('.promise').innerHTML = dec(vote[3]);
   voteElm.querySelector('.just').innerHTML = vote[4];
   document.querySelector('.detail .votes').appendChild(voteElm);
 }
