@@ -1,4 +1,4 @@
-var url = "http://localhost/api";
+var url = location.protocol + "//" + location.host + "/api";
 
 function doRequest(opts) {
   return new Promise(function (resolve, reject) {
