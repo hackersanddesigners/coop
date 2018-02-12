@@ -127,7 +127,8 @@ async function appLogin(params) {
     'endpoint': '/login',
     'method': 'POST',
     'params': params })
-  .then(() => {
+  .then((data) => {
+    user = JSON.parse(data).user;
     appShow();
   })
   .catch((err, res) => {
@@ -144,7 +145,18 @@ async function appAddActivity(params) {
     appShowNotice('Thank you! Please allow some time for your activity to be mined. 🔨');
   })
   .catch((err, res) => {
-//    document.querySelector('.error').innerHTML = "U FAILED.";
+  });
+}
+
+async function appAddMember(params) {
+  doRequest({
+    'endpoint': '/members',
+    'method': 'POST',
+    'params': params })
+  .then(() => {
+    appShowNotice('Thank you! Please allow some time for your member to be mined. 🔨');
+  })
+  .catch((err, res) => {
   });
 }
 
@@ -157,7 +169,6 @@ async function appAddPart(params) {
     appShowNotice('Thank you! Please allow some time for your participant to be mined. 🔨');
   })
   .catch((err, res) => {
- //   document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
 
@@ -170,7 +181,6 @@ async function appAddVote(params) {
     appShowNotice('Thank you! Please allow some time for your vote to be mined. 🔨');
   })
   .catch((err, res) => {
- //   document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
 
@@ -183,13 +193,12 @@ async function appFinalize(params) {
     appShowNotice('Thank you! Please allow some time for activity to be mined. 🔨');
   })
   .catch((err, res) => {
- //   document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
 
 function appLogout() {
   doRequest({ 'endpoint': '/logout' })
-  .then((acts) => {
+  .then(() => {
     appShowLogin();
   });
 }
@@ -197,10 +206,6 @@ function appLogout() {
 /**
  * UI stuff - JBG
  */
-
-function appCreateActivity() {
-  appShowAddActivity();
-}
 
 function appShowNotice(notice) {
   document.querySelector('.detail').innerHTML = '';
@@ -310,7 +315,9 @@ function appShowNoVotes() {
 }
 
 function appShowVote(vote) {
+  if(vote[5]) return;
   var voteElm = document.querySelector('.templates .vote').cloneNode(true);
+  voteElm.setAttribute('data-id', vote[0]);
   voteElm.querySelector('.voter').innerHTML = memberName(vote[2]);
   voteElm.querySelector('.promise').innerHTML = dec(vote[3]);
   voteElm.querySelector('.just').innerHTML = vote[4];
@@ -323,7 +330,9 @@ function appShowMenu() {
     document.querySelector('.templates .menu').cloneNode(true)
   );
   document.querySelector('.detail .menu .menu-activity')
-    .addEventListener('click', appCreateActivity, false);
+    .addEventListener('click', appShowAddActivity, false);
+  document.querySelector('.detail .menu .menu-member')
+    .addEventListener('click', appShowAddMember, false);
   document.querySelector('.detail .menu .menu-logout')
     .addEventListener('click', appLogout, false);
 }
@@ -360,7 +369,7 @@ function appShowAddActivity() {
   document.querySelector('.detail .add-activity .button')
     .addEventListener('click', () => {
       appAddActivity({
-        "cost": document.querySelector('.detail input[name=cost]').value,
+        "cost": parseFloat(document.querySelector('.detail input[name=cost]').value) * 100,
         "title": document.querySelector('.detail input[name=title]').value,
         "description": document.querySelector('.detail input[name=description]').value,
         "global": document.querySelector('.detail input[name=global]').checked
@@ -368,10 +377,24 @@ function appShowAddActivity() {
     }, false);
 }
 
+function appShowAddMember() {
+  document.querySelector('.detail').innerHTML = '';
+  appShowClose();
+  document.querySelector('.detail').appendChild(
+    document.querySelector('.templates .add-member').cloneNode(true)
+  );
+  document.querySelector('.detail .add-member .button')
+    .addEventListener('click', () => {
+      appAddMember({
+        "name": document.querySelector('.detail input[name=name]').value,
+        "addr": document.querySelector('.detail input[name=addr]').value
+      });
+    }, false);
+}
 
 function appShow() {
-  appShowHeader();
   appGetMembers();
+  appShowHeader();
   appGetActivities();
   appShowMenu();
 }

@@ -223,7 +223,7 @@ contract Coop is owned {
     int promise = 0;
     for(uint i = 0; i < voteIds[actId].length; i++) {
       Vote memory vote = votes[voteIds[actId][i]];
-      if(actId == vote.actId) {
+      if(actId == vote.actId && !vote.deleted) {
         promise += vote.promise;
       }
     }
@@ -299,7 +299,8 @@ contract Coop is owned {
    */
   function voted(uint memId, uint actId) public view returns (bool) {
     for(uint i = 0; i < voteIds[actId].length; i++) {
-      if(memId == votes[voteIds[actId][i]].voterId) {
+      if(memId == votes[voteIds[actId][i]].voterId &&
+        !votes[voteIds[actId][i]].deleted) {
         return true;
       } 
     }
