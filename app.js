@@ -1,4 +1,4 @@
-var url = "http://localhost/api";
+var url = location.protocol + "//" + location.host + "/api";
 
 function doRequest(opts) {
   return new Promise(function (resolve, reject) {
@@ -43,6 +43,12 @@ var user = '_';
 /**
  * Helpers - JBG
  */
+
+function dec(n) {
+  return parseFloat(n / 100).toFixed(2);
+}
+
+
 function memberName(memId) {
   for(var i = 0; i < members.length; i++) {
     if(members[i][0] == memId) return members[i][2];
@@ -109,8 +115,8 @@ function appGetMembers() {
     members = JSON.parse(mems);
     for(var i = 0; i < members.length; i++) {
       if(members[i][2] == user) {
-        document.querySelector('.header-bal .header-val').innerHTML = members[i][4];
-        document.querySelector('.header-prom .header-val').innerHTML = members[i][5];
+        document.querySelector('.header-bal .header-val').innerHTML = dec(members[i][4]);
+        document.querySelector('.header-prom .header-val').innerHTML = dec(members[i][5]);
       }
     }
   });
@@ -121,7 +127,8 @@ async function appLogin(params) {
     'endpoint': '/login',
     'method': 'POST',
     'params': params })
-  .then(() => {
+  .then((data) => {
+    user = JSON.parse(data).user;
     appShow();
   })
   .catch((err, res) => {
@@ -138,7 +145,18 @@ async function appAddActivity(params) {
     appShowNotice('Thank you! Please allow some time for your activity to be mined. 🔨');
   })
   .catch((err, res) => {
-//    document.querySelector('.error').innerHTML = "U FAILED.";
+  });
+}
+
+async function appAddMember(params) {
+  doRequest({
+    'endpoint': '/members',
+    'method': 'POST',
+    'params': params })
+  .then(() => {
+    appShowNotice('Thank you! Please allow some time for your member to be mined. 🔨');
+  })
+  .catch((err, res) => {
   });
 }
 
@@ -151,7 +169,6 @@ async function appAddPart(params) {
     appShowNotice('Thank you! Please allow some time for your participant to be mined. 🔨');
   })
   .catch((err, res) => {
- //   document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
 
@@ -164,7 +181,6 @@ async function appAddVote(params) {
     appShowNotice('Thank you! Please allow some time for your vote to be mined. 🔨');
   })
   .catch((err, res) => {
- //   document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
 
@@ -177,13 +193,12 @@ async function appFinalize(params) {
     appShowNotice('Thank you! Please allow some time for activity to be mined. 🔨');
   })
   .catch((err, res) => {
- //   document.querySelector('.error').innerHTML = "U FAILED.";
   });
 }
 
 function appLogout() {
   doRequest({ 'endpoint': '/logout' })
-  .then((acts) => {
+  .then(() => {
     appShowLogin();
   });
 }
@@ -191,10 +206,6 @@ function appLogout() {
 /**
  * UI stuff - JBG
  */
-
-function appCreateActivity() {
-  appShowAddActivity();
-}
 
 function appShowNotice(notice) {
   document.querySelector('.detail').innerHTML = '';
@@ -221,7 +232,8 @@ function appShowActivity(act) {
   activity.querySelector('.title').innerHTML = act[2];
   activity.querySelector('.description').innerHTML = act[3];
   activity.querySelector('.description').setAttribute("href", act[3]);
-  activity.querySelector('.cost').innerHTML = act[6].toString() + ' / ' + act[4].toString();
+  activity.querySelector('.cost').innerHTML =
+    dec(act[6]).toString() + ' / ' + dec(act[4]).toString();
 
   document.querySelector('.detail').appendChild(activity);
 
@@ -231,7 +243,7 @@ function appShowActivity(act) {
   document.querySelector('.detail .add-vote').addEventListener('click', () => {
     appAddVote({
       'actId': document.querySelector('.detail .activity').getAttribute('data-id'),
-      'prom': document.querySelector('.detail input[name=promise]').value,
+      'prom': parseFloat(document.querySelector('.detail input[name=promise]').value) * 100,
       'just': document.querySelector('.detail input[name=just]').value
     });
   }, true);
@@ -256,7 +268,8 @@ function appShowActivities(acts) {
     item.querySelector('.title').innerHTML = acts[i][2];
     item.querySelector('.description').innerHTML = acts[i][3];
     item.querySelector('.description').setAttribute("href", acts[i][3]);
-    item.querySelector('.cost').innerHTML = acts[i][6] + ' / ' + acts[i][4].toString();
+    item.querySelector('.cost').innerHTML =
+      dec(acts[i][6]) + ' / ' + dec(acts[i][4].toString());
     document.querySelector('.items').appendChild(item);
   }
   var items = document.querySelectorAll('.items .item');
@@ -302,9 +315,11 @@ function appShowNoVotes() {
 }
 
 function appShowVote(vote) {
+  if(vote[5]) return;
   var voteElm = document.querySelector('.templates .vote').cloneNode(true);
+  voteElm.setAttribute('data-id', vote[0]);
   voteElm.querySelector('.voter').innerHTML = memberName(vote[2]);
-  voteElm.querySelector('.promise').innerHTML = vote[3];
+  voteElm.querySelector('.promise').innerHTML = dec(vote[3]);
   voteElm.querySelector('.just').innerHTML = vote[4];
   document.querySelector('.detail .votes').appendChild(voteElm);
 }
@@ -315,7 +330,9 @@ function appShowMenu() {
     document.querySelector('.templates .menu').cloneNode(true)
   );
   document.querySelector('.detail .menu .menu-activity')
-    .addEventListener('click', appCreateActivity, false);
+    .addEventListener('click', appShowAddActivity, false);
+  document.querySelector('.detail .menu .menu-member')
+    .addEventListener('click', appShowAddMember, false);
   document.querySelector('.detail .menu .menu-logout')
     .addEventListener('click', appLogout, false);
 }
@@ -352,7 +369,7 @@ function appShowAddActivity() {
   document.querySelector('.detail .add-activity .button')
     .addEventListener('click', () => {
       appAddActivity({
-        "cost": document.querySelector('.detail input[name=cost]').value,
+        "cost": parseFloat(document.querySelector('.detail input[name=cost]').value) * 100,
         "title": document.querySelector('.detail input[name=title]').value,
         "description": document.querySelector('.detail input[name=description]').value,
         "global": document.querySelector('.detail input[name=global]').checked
@@ -360,10 +377,24 @@ function appShowAddActivity() {
     }, false);
 }
 
+function appShowAddMember() {
+  document.querySelector('.detail').innerHTML = '';
+  appShowClose();
+  document.querySelector('.detail').appendChild(
+    document.querySelector('.templates .add-member').cloneNode(true)
+  );
+  document.querySelector('.detail .add-member .button')
+    .addEventListener('click', () => {
+      appAddMember({
+        "name": document.querySelector('.detail input[name=name]').value,
+        "addr": document.querySelector('.detail input[name=addr]').value
+      });
+    }, false);
+}
 
 function appShow() {
-  appShowHeader();
   appGetMembers();
+  appShowHeader();
   appGetActivities();
   appShowMenu();
 }
