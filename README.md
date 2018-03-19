@@ -18,7 +18,7 @@ $ `apt-get install ethereum`
 
 $ `apt-get install solc`
 
-## Create account
+## Create Geth account
 
 `$ geth account new`
 
