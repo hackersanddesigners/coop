@@ -6,12 +6,17 @@
 
 ## Install dependencies
 
-apt-get update
-apt-get install software-properties-common git curl nginx
-add-apt-repository -y ppa:ethereum/ethereum
-apt-get update
-apt-get install ethereum
-apt-get install solc 
+$ `apt-get update`
+
+$ `apt-get install software-properties-common git curl nginx`
+
+$ `add-apt-repository -y ppa:ethereum/ethereum`
+
+$ `apt-get update`
+
+$ `apt-get install ethereum`
+
+$ `apt-get install solc`
 
 ## Create account
 
