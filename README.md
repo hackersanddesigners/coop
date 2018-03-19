@@ -1,7 +1,5 @@
 # coop
 
-## notes -- at some point this might be really documentation....lol.
-
 ## Start a Docker container
 
 `$ docker run -it --name hd-coop  -p 8545:8545 -p 80:80 ubuntu:latest`
