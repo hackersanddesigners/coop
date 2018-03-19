@@ -2,42 +2,116 @@
 
 ## notes -- at some point this might be really documentation....lol.
 
-docker run -it --name hd-coop  -p 8545:8545 -p 80:80 ubuntu:latest
+## Start a Docker container
+
+`$ docker run -it --name hd-coop  -p 8545:8545 -p 80:80 ubuntu:latest`
+
+## Install dependencies
 
 apt-get update
-apt-get install software-properties-common
+apt-get install software-properties-common git curl nginx
 add-apt-repository -y ppa:ethereum/ethereum
 apt-get update
 apt-get install ethereum
 apt-get install solc 
 
-geth init genesis.json
-geth --networkid 1337 console
+## Create account
 
-> personal.newAccount("password")
-> eth.getBalance(eth.coinbase)
-> eth.accounts
-> miner.start()
-> miner.stop()
+`$ geth account new`
+
+## Run puppeth wizard
+
+`$ puppeth`
+
+### Configure example 
+
+```
+
+Please specify a network name to administer (no spaces or hyphens, please)
+> hdcoop
+
+What would you like to do? (default = stats)
+ 1. Show network stats
+ 2. Configure new genesis
+ 3. Track new remote server
+ 4. Deploy network components
+> 2
+
+Which consensus engine to use? (default = clique)
+ 1. Ethash - proof-of-work
+ 2. Clique - proof-of-authority
+> 2
+
+How many seconds should blocks take? (default = 15)
+> (press enter) 
+
+Which accounts are allowed to seal? (mandatory at least one)
+> 0xddaebdd6966bf50584b73f14e07a5fd0754207b2 (replace with your account id)
+> 0x
+
+Which accounts should be pre-funded? (advisable at least one)
+> 0xddaebdd6966bf50584b73f14e07a5fd0754207b2
+> 0x
+
+Specify your chain/network ID if you want an explicit one (default = random)
+> (press enter)
+
+What would you like to do? (default = stats)
+ 1. Show network stats
+ 2. Manage existing genesis
+ 3. Track new remote server
+ 4. Deploy network components
+> 
+
+What would you like to do? (default = stats)
+ 1. Show network stats
+ 2. Manage existing genesis
+ 3. Track new remote server
+ 4. Deploy network components
+> 2
+
+ 1. Modify existing fork rules
+ 2. Export genesis configuration
+ 3. Remove genesis configuration
+> 2
+
+Which file to save the genesis into? (default = hdcoop.json)
+> (press enter)
+
  
+```
+## Git clone Repo
 
-geth --networkid 1337 --rpc --rpcapi "eth,net,web3,admin,personal" console 2>> geth.log
+`$ git clone https://github.com/hackersanddesigners/coop.git`
 
-docker start -ia hd-coop
-docker exec -it hd-coop bash
+## Compile the contract
 
-solc -o target --bin --abi coop.sol
+`$ solc -o target --bin --abi coop.sol`
 
-> personal.unlockAccount(eth.coinbase, "password")
+## Create a helper file that contains the geth password
 
-var coopFactory = eth.contract(<contents of the file coop.abi>)
-var coopCompiled = "0x" + "<contents of the file coop.bin>"
+`$ echo <YOUR_PASSPRASH> >> gethpass`
 
+## Start Geth
 
+`$ geth --unlock 0xc8222dd7131aeb0338b0711dcc38c0779eac2ddc --password /root/gethpass --mine --rpc --rpcapi "eth,net,web3,admin,personal" console 2>> geth.log`
 
-var _budget = 10000; 
+### Set the contents of the ABI (should be in the target dir from the solc command, Coop.abi)
 
-var coop = coopFactory.new(_budget, { from: eth.accounts[0], data:coopCompiled, gas:100000000 }, function(e, contract) {
+`> var coopFactory = eth.contract(<contents of the file coop.abi>)`
+
+### Set the contents of the Contract (also in the target dir from the solc command, Coop.bin)
+
+`> var coopCompiled = "0x" + "<contents of the file coop.bin>"`
+
+### Set the initial arguments for the contract, in this case budget
+
+`> var _budget = 10000;`
+
+### Submit the contract
+
+```
+> var coop = coopFactory.new(_budget, { from: eth.coinbase, data:coopCompiled gas: 4000000 }, function(e, contract) {
     if(!e) {
       if(!contract.address) {
         console.log("Contract transaction send: TransactionHash: " + contract.transactionHash + " waiting to be mined...");
@@ -46,32 +120,134 @@ var coop = coopFactory.new(_budget, { from: eth.accounts[0], data:coopCompiled, 
         console.log("Contract mined! Address: " + contract.address);
         console.log(contract);
       }
+    } else {
+      console.log(e);
     }
 })
-
-0xc156d9ea3fb7e181a91e0ec0fd68b36a4b283064
-
-apt-get install nginx
-apt-get install build-essential
-/usr/sbin/nginx
-
-curl -sL https://deb.nodesource.com/setup_8.x | bash -
-apt-get install -y nodejs
+```
 
 
+### Create some test accounts (doesn't really matter the number) in Geth
 
-curl --cookie-jar cookies.txt -d "name=jbg&pwd=<YOUR_PASSPHRASE>" "http://localhost/api/login"
-curl --cookie cookies.txt -d "name=andre&addr=0x0f764540f362d1e88e59432cf1c130cd285c8155" "http://localhost/api/members"
-curl --cookie cookies.txt -X POST "http://localhost/api/budget"
-curl --cookie cookies.txt -X POST "http://localhost/api/budget"
+`> personal.newAccount("password")`
+
+### Send Ether to the new accounts
+
+`> eth.sendTransaction({from:eth.coinbase, to:eth.accounts[1], value: web3.toWei(1.0, "ether")})`
+
+## Setting up the server
+
+### Create a .js (javascript) file with credentials
+
+```
+exports.creds = {
+  "jbg": {
+    "pwd": "password",
+    "addr": "0x4e858..."
+  },
+  "selby": {
+    "pwd": "password",
+    "addr": "0xd8852..."
+  },
+  "anja": {
+    "pwd": "password",
+    "addr": "0x27c84..."
+  },
+  "andre": {
+    "pwd": "password",
+    "addr": "0x000a2..."
+  },
+  "juliette": {
+    "pwd": "password",
+    "addr": "0xd939a..."
+  },
+  "heerko": {
+    "pwd": "password",
+    "addr": "0xd092d..."
+  }
+};
+```
+
+Replace the "addr" bits with the accounts created in Geth, and the password with the passwords you gave to Geth.
+
+## Install node.js
 
 
-curl --cookie cookies.txt -d "cost=1000&title=Fun&description=Yes" "http://localhost/api/activities"
+`$ curl -sL https://deb.nodesource.com/setup_8.x | bash -`
 
+`$ apt-get install -y nodejs`
 
+## Start the coopserver
 
+`$ node server.js`
 
-const tx = await MyContract.MyMethod.sendTransaction(MyParams);
+## Configure nginx
 
-eth.sendTransaction({from:eth.coinbase, to:eth.accounts[1], value: web3.toWei(0.05, "ether")})
+Add a proxy pass for the node.js server.
 
+```
+location /api {
+     proxy_pass http://localhost:3000;
+}
+```
+
+## Start nginx
+
+`$ nginx`
+
+## Helper docker commands
+
+### Start your container
+
+`$ docker start -ia hd-coop`
+
+### Shell into a running container
+
+`$ docker exec -it hd-coop bash`
+
+## Helper geth commands
+
+### Unlock account
+
+`> personal.unlockAccount(eth.coinbase, "password")`
+
+### Get account balance
+
+`> eth.getBalance(eth.coinbase)`
+
+### Start miner
+
+`> miner.start()`
+
+### Stop miner
+
+`> miner.stop()`
+
+### Check current gas limit
+
+`> eth.getBlock("latest")`
+
+## cURL Examples
+
+## Login
+
+`$ curl --cookie-jar cookies.txt -d "name=jbg&pwd=password" "http://localhost/api/login"`
+
+## Add a member
+
+`$ curl --cookie cookies.txt -d "name=andre&addr=0x0f764540f362d1e88e59432cf1c130cd285c8155" "http://localhost/api/members"`
+
+## DISTRIBUTE BUDGET
+
+`$ curl --cookie cookies.txt -X POST "http://localhost/api/budget"`
+
+## Create activity
+
+`$curl --cookie cookies.txt -d "cost=1000&title=Fun&description=Yes" "http://localhost/api/activities"`
+
+## Other commands
+
+### Stop nginx
+
+`$ nginx -s stop`
+ 

@@ -1,4 +1,4 @@
-var url = location.protocol + "//" + location.host + "/api";
+var url = "https://coop.hackersanddesigners.nl/api";
 
 function doRequest(opts) {
   return new Promise(function (resolve, reject) {
