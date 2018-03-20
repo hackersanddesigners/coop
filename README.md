@@ -129,6 +129,8 @@ Which file to save the genesis into? (default = hdcoop.json)
 })
 ```
 
+### IMPORTANT make note of the address that pops out once the contract is mined.  You are going to need it later.
+
 
 ### Create some test accounts (doesn't really matter the number) in Geth
 
@@ -172,6 +174,14 @@ exports.creds = {
 ```
 
 Replace the "addr" bits with the accounts created in Geth, and the password with the passwords you gave to Geth.
+
+### Update abi.js
+
+Set `exports.abi = ` to the content of Coop.abi in the target directory created during the `solc` step.
+
+### Update address.js
+
+Set `exports.contractAddress = ` to the address that you took note of earlier, that popped up after the contract was mined.
 
 ## Install node.js
 
