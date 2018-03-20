@@ -6,21 +6,21 @@
 
 ## Install dependencies
 
-$ `apt-get update`
+`$ apt-get update`
 
-$ `apt-get install software-properties-common git curl nginx`
+`$ apt-get install software-properties-common git curl nginx`
 
-$ `add-apt-repository -y ppa:ethereum/ethereum`
+`$ add-apt-repository -y ppa:ethereum/ethereum`
 
-$ `apt-get update`
+`$ apt-get update`
 
-$ `apt-get install ethereum`
+`$ apt-get install ethereum`
 
-$ `apt-get install solc`
+`$ apt-get install solc`
 
 ## Create Geth account
 
-`$ geth account new`
+`$ geth account new`. Save the id somewhere for later.
 
 ## Run puppeth wizard
 
@@ -29,7 +29,6 @@ $ `apt-get install solc`
 ### Configure example 
 
 ```
-
 Please specify a network name to administer (no spaces or hyphens, please)
 > hdcoop
 
@@ -80,9 +79,8 @@ What would you like to do? (default = stats)
 
 Which file to save the genesis into? (default = hdcoop.json)
 > (press enter)
-
- 
 ```
+
 ## Git clone Repo
 
 `$ git clone https://github.com/hackersanddesigners/coop.git`
@@ -93,11 +91,11 @@ Which file to save the genesis into? (default = hdcoop.json)
 
 ## Create a helper file that contains the geth password
 
-`$ echo <YOUR_PASSPRASH> >> gethpass`
+`$ echo <YOUR_PASSPHRASE> >> gethpass`
 
 ## Start Geth
 
-`$ geth --unlock 0xc8222dd7131aeb0338b0711dcc38c0779eac2ddc --password /root/gethpass --mine --rpc --rpcapi "eth,net,web3,admin,personal" console 2>> geth.log`
+`$ geth --unlock <geth-account> --password /root/gethpass --mine --rpc --rpcapi "eth,net,web3,admin,personal" console 2>> geth.log`
 
 ### Set the contents of the ABI (should be in the target dir from the solc command, Coop.abi)
 
@@ -174,7 +172,6 @@ exports.creds = {
 Replace the "addr" bits with the accounts created in Geth, and the password with the passwords you gave to Geth.
 
 ## Install node.js
-
 
 `$ curl -sL https://deb.nodesource.com/setup_8.x | bash -`
 
@@ -254,3 +251,29 @@ location /api {
 
 `$ nginx -s stop`
  
+## To start up the whole stack when developing
+
+To access already existing docker image:
+
+- `docker start -ia hd-coop` 
+
+or if already running:
+
+- `docker exec -it hd-coop bash` 
+
+Then to start mining:
+
+- `cd ~ && geth --unlock <geth-account-id> --password /root/gethpass --mine --rpc --rpcapi "eth,net,web3,admin,personal" console 2>> geth.log`
+
+Open new terminal window and do:
+
+- `docker exec -it hd-coop bash`
+- `tail -f geth.log`
+
+Open new terminal window and do:
+
+- `docker exec -it hd-coop bash`
+- `cd ~/coopserv/ && node server.js`
+	- if problems when running the server: 
+		- `ps aux | grep node`
+		- `pkill node` 
