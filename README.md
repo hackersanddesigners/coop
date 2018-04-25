@@ -89,7 +89,7 @@ press ctrl + C to stop and exit from the puppeth wizard process
 
 ## Compile the contract
 
-`$ solc -o target --bin --abi coop.sol`
+`$ cd coop/ && solc -o target --bin --abi coop.sol`
 
 ## Create a helper file that contains the geth password
 
