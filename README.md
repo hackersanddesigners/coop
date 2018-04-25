@@ -79,6 +79,8 @@ What would you like to do? (default = stats)
 
 Which file to save the genesis into? (default = hdcoop.json)
 > (press enter)
+
+press ctrl + C to stop and exit from the puppeth wizard process
 ```
 
 ## Git clone Repo
