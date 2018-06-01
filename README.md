@@ -82,6 +82,9 @@ Which file to save the genesis into? (default = hdcoop.json)
 
 press ctrl + C to stop and exit from the puppeth wizard process
 ```
+## Initialize Geth
+
+`$ geth init hd-coop.json`
 
 ## Git clone Repo
 
