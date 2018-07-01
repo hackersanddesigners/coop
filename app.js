@@ -270,6 +270,7 @@ function appShowActivities(acts) {
     item.querySelector('.description').setAttribute("href", acts[i][3]);
     item.querySelector('.cost').innerHTML =
       dec(acts[i][6]) + ' / ' + dec(acts[i][4].toString());
+    if(acts[i][5]) item.querySelector('.title').classList.add("green");
     document.querySelector('.items').appendChild(item);
   }
   var items = document.querySelectorAll('.items .item');
