@@ -1,4 +1,4 @@
-var url = "https://coop.hackersanddesigners.nl/api";
+var url = location.protocol + "//" + location.host + "/api";
 
 function doRequest(opts) {
   return new Promise(function (resolve, reject) {
@@ -48,6 +48,10 @@ function dec(n) {
   return parseFloat(n / 100).toFixed(2);
 }
 
+function isNumber(n) {
+  var reg = /^\d+$/;
+  return reg.test(n);
+}
 
 function memberName(memId) {
   for(var i = 0; i < members.length; i++) {
@@ -369,12 +373,17 @@ function appShowAddActivity() {
   );
   document.querySelector('.detail .add-activity .button')
     .addEventListener('click', () => {
-      appAddActivity({
-        "cost": parseFloat(document.querySelector('.detail input[name=cost]').value) * 100,
-        "title": document.querySelector('.detail input[name=title]').value,
-        "description": document.querySelector('.detail input[name=description]').value,
-        "global": document.querySelector('.detail input[name=global]').checked
-      });
+      var cost = document.querySelector('.detail input[name=cost]').value;
+      if(isNumber(cost)) { 
+	      appAddActivity({
+		"cost": parseFloat(cost) * 100,
+		"title": document.querySelector('.detail input[name=title]').value,
+		"description": document.querySelector('.detail input[name=description]').value,
+		"global": document.querySelector('.detail input[name=global]').checked
+	      });
+      } else {
+       alert('Please use integer number for cost. No "." or ",".');
+      }
     }, false);
 }
 
