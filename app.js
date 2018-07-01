@@ -264,6 +264,7 @@ function appShowActivity(act) {
 }
 
 function appShowActivities(acts) {
+  acts.sort((a, b) => { return a[5] - b[5] });
   console.log(acts);
   document.querySelector('.items').innerHTML = '';
   for(var i = 0; i < acts.length; i++) {
