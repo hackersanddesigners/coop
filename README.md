@@ -8,7 +8,7 @@
 
 `$ apt-get update`
 
-`$ apt-get install software-properties-common git curl nginx`
+`$ apt-get install software-properties-common git curl nginx vim`
 
 `$ add-apt-repository -y ppa:ethereum/ethereum`
 
@@ -57,13 +57,6 @@ Which accounts should be pre-funded? (advisable at least one)
 
 Specify your chain/network ID if you want an explicit one (default = random)
 > (press enter)
-
-What would you like to do? (default = stats)
- 1. Show network stats
- 2. Manage existing genesis
- 3. Track new remote server
- 4. Deploy network components
-> 
 
 What would you like to do? (default = stats)
  1. Show network stats
@@ -176,7 +169,11 @@ exports.creds = {
 };
 ```
 
-Replace the "addr" bits with the accounts created in Geth, and the password with the passwords you gave to Geth.
+and replace the "addr" bits with the accounts created in Geth, and the password with the passwords you gave to Geth.
+
+## Setup node server
+
+`cd ~/coop` and do `git clone https://github.com/hackersanddesigners/coopserv.git`
 
 ### Update abi.js
 
@@ -191,6 +188,20 @@ Set `exports.contractAddress = ` to the address that you took note of earlier, t
 `$ curl -sL https://deb.nodesource.com/setup_8.x | bash -`
 
 `$ apt-get install -y nodejs`
+
+or
+
+`$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash`
+
+`$ export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion`
+
+`$ nvm install 8`
+
+(install app dependencies listed in `package.json`)
+
+`$ npm install`
 
 ## Start the coopserver
 
@@ -209,6 +220,19 @@ location /api {
 ## Start nginx
 
 `$ nginx`
+
+
+## Folder setup
+
+```
+/root/
+  |___ gethpass
+  |___ hdcoop.json
+  |___ get.log
+  |___ coop/
+        |___ target
+        |___ coopserv
+```
 
 ## Helper docker commands
 
