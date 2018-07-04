@@ -1,8 +1,14 @@
 # coop
 
+## Start a Docker container with contract
+
+`$ docker build -t hd-coop .`
+
+`$ docker run -it --name hd-coop -p 8545:8545 -p 80:80 hd-coop`
+
 ## Start a Docker container
 
-`$ docker run -it --name hd-coop  -p 8545:8545 -p 80:80 ubuntu:latest`
+`$ docker run -it --name hd-coop -p 8545:8545 -p 80:80 ubuntu:latest`
 
 ## Install dependencies
 

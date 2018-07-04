@@ -27,7 +27,6 @@ RUN export HASH=$(geth --password /root/gethpass account new | awk -vRS='}' -vFS
   sed -i -e "s/<COOP_ABI>/$(cat /root/target/Coop.abi)/g" /root/deploy.js; \
   sed -i -e "s/<COOP_BIN>/$(cat /root/target/Coop.bin)/g" /root/deploy.js; \
   geth init /root/hdcoop.json; \
-  geth --unlock 0x$HASH --password /root/gethpass --mine 2>> /root/geth.log; \
-  geth --unlock 0x$HASH --password /root/gethpass js /root/deploy.js
+  geth --networkid 1337 --unlock 0x$HASH --password /root/gethpass --mine js /root/deploy.js
 CMD /root/run.sh
 
