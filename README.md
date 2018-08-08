@@ -272,6 +272,34 @@ location /api {
 
 `> eth.getBlock("latest")`
 
+### Load the contract
+
+`> var abi = <ABI from either the target dir of compiling, or abi.js in the coopserv project>`
+
+`> var contract = web3.eth.contract(abi)`
+
+`> var instance = contract.at('<contract address when the contract was mined, check address.js of coopserv project>')`
+
+### Execute contract functions
+
+`> instance.budget()`
+
+`> instance.deactivateMember(<member address, ex. "0x4e858efead93c4e749bf2e58848452f4cb7c7bdc", { from: <member address, ex. "0x4e858efead93c4e749bf2e58848452f4cb7c7bdc"> })`
+
+The `from` is actually important there, otherwise you will get a Invalid Address Error.
+
+You can also set:
+
+`> eth.defaultAccount = eth.coinbase`
+
+...if you want to avoid setting the `from`.
+
+Once you execute a transaction or function, you will get another hash back.  You can use that hash to check the status of the transaction:
+
+`> eth.getTransactionReceipt("0xc7c63b67747c0c825229ce3d36d226423adb8cab6bebe12b6d5001e0dc3f79b3")`
+
+There is a status in the reply: `0x0` it failed, or `0x1` it succeeded.
+
 ## cURL Examples
 
 ## Login
@@ -322,3 +350,4 @@ Open new terminal window and do:
 	- if problems when running the server: 
 		- `ps aux | grep node`
 		- `pkill node` 
+
