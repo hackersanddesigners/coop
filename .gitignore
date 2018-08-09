@@ -1,3 +1,5 @@
 abi.js
 address.js
-./target
+creds.js
+geth.log
+target
